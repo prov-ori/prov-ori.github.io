@@ -5,7 +5,7 @@ document.getElementById("contactForm").addEventListener("submit", function(event
     var formData = new FormData(form);
 
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "form.php", true);
+    xhr.open("POST", "/form.php", true);
     xhr.onload = function() {
         if (xhr.status === 200) {
             document.getElementById("response").innerHTML = xhr.responseText;
