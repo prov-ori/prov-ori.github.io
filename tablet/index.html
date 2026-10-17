@@ -1,0 +1,1117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+<title>Зачем мне планшет</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Onest:wght@400;500;600&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: тетрадные поля. Одна колонка, рабочая клетка швейного коврика на первом экране,
+   пометки пером на полях, карточки раскрываются как конспект. */
+:root{
+  --bg:#F1F4F2; --surface:#FFFFFF; --surface-2:#E7EDE9; --fg:#13211B; --muted:#4F6058; --line:#C9D5CE;
+  --accent:#0F6B53; --accent-fg:#FFFFFF; --accent-soft:#D6EBE2;
+  --chalk:#F0C94A; --on-chalk:#2A2100;
+  --good:#1B6E3F; --mid:#8F5A00; --low:#5E6965; --grid:rgba(15,107,83,.10);
+  --f-display:"Unbounded","Onest",system-ui,sans-serif;
+  --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1613; --surface:#16211C; --surface-2:#1E2C26; --fg:#E4EEE8; --muted:#9DB0A6; --line:#2C3D35;
+    --accent:#4FC3A1; --accent-fg:#06241B; --accent-soft:#17342B;
+    --chalk:#D9A91E; --on-chalk:#1F1700;
+    --good:#5CCB8A; --mid:#E0A93B; --low:#93A199; --grid:rgba(79,195,161,.10);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1613; --surface:#16211C; --surface-2:#1E2C26; --fg:#E4EEE8; --muted:#9DB0A6; --line:#2C3D35;
+  --accent:#4FC3A1; --accent-fg:#06241B; --accent-soft:#17342B;
+  --chalk:#D9A91E; --on-chalk:#1F1700;
+  --good:#5CCB8A; --mid:#E0A93B; --low:#93A199; --grid:rgba(79,195,161,.10);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--f-body); font-size:16px; line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 64px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:760px;margin:0 auto}
+h1,h2,h3,p,dl,dd,ul{margin:0}
+h1,h2{font-family:var(--f-display);font-weight:500;text-wrap:balance;overflow-wrap:anywhere}
+h1{font-size:clamp(1.45rem,6.2vw,2.2rem);line-height:1.2}
+h2{font-size:1.2rem;line-height:1.3}
+h3{font-size:1rem;font-weight:600}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.stack{display:flex;flex-direction:column;gap:16px}
+section{padding-block:40px 0;scroll-margin-top:calc(64px + env(safe-area-inset-top,0px))}
+details.card{scroll-margin-top:calc(64px + env(safe-area-inset-top,0px))}
+.sec-lead{color:var(--muted);max-width:65ch}
+mark{background:linear-gradient(transparent 58%,var(--chalk) 58%);color:inherit;padding:0 1px}
+.hand{font-family:var(--f-hand);font-size:1.3rem;line-height:1.2;color:var(--accent)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line);padding-block:10px}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:.85rem;color:var(--fg);text-decoration:none;background:var(--surface);white-space:nowrap}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-current="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+
+/* hero */
+.hero{margin-top:20px;padding:20px 16px 22px;border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;gap:14px;
+  background-color:var(--surface);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.lead{max-width:60ch}
+.quick{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.quick dt{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.quick dd{font-size:.95rem}
+.concerns{display:flex;flex-direction:column;gap:8px}
+.concerns .seg button{font-weight:500}
+
+/* tags */
+.tag{display:inline-block;flex:none;font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid currentColor;white-space:nowrap}
+.tag.hi{color:var(--good)} .tag.mid{color:var(--mid)} .tag.low{color:var(--low)}
+
+/* cards (details) */
+details.card{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+details.card>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;font-weight:600}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary .ct{min-width:0;overflow-wrap:anywhere}
+details.card>summary::after{content:"+";font-family:var(--f-display);color:var(--accent);font-size:1.1rem;margin-left:4px}
+details.card[open]>summary::after{content:"\2212"}
+.cb{padding:2px 16px 16px;display:flex;flex-direction:column;gap:12px}
+.cb dt{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.cb dd{margin-top:2px}
+.hrs{font-size:.9rem;color:var(--muted)}
+.cb ul,.panel ul{padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+
+/* panels and forms */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--muted);min-width:0}
+input[type=number],select,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%;min-width:0}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.srow{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}
+.srow label{color:var(--fg);font-size:.95rem}
+.srow input{grid-column:1/-1}
+.srow output{font-weight:600}
+.total{font-size:.92rem;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button,.btn{font:inherit;font-weight:600;font-size:.92rem;padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn,.seg button.btn{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.ghost,.seg button.btn.ghost{background:transparent;color:var(--accent);border-color:var(--accent)}
+.btn.ghost[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+.check{flex-direction:row;align-items:flex-start;gap:10px;color:var(--fg);font-size:.95rem}
+.check input{margin-top:4px;flex:none;width:18px;height:18px;accent-color:var(--accent)}
+
+/* catalog */
+.tlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.tcard.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.tcard header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.tcard h3{font-family:var(--f-display);font-weight:500;font-size:.98rem;line-height:1.3;overflow-wrap:anywhere}
+.price{font-size:1.35rem;font-weight:600;font-variant-numeric:tabular-nums}
+.chips2{display:flex;flex-wrap:wrap;gap:6px}
+.slotbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.slotbtns .btn{padding:8px 12px;font-size:.88rem}
+
+/* model cards */
+.models{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.mcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sub{font-size:.85rem;color:var(--muted)}
+.hint{font-size:.78rem;color:var(--muted)}
+.out{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.out dt{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.out dd{font-size:1.15rem;font-weight:600;font-variant-numeric:tabular-nums}
+.out .wide{grid-column:1/-1}
+.note{background:var(--accent-soft);border-radius:8px;padding:12px 14px;max-width:70ch}
+.note ul{padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+
+/* table */
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:420px;font-size:.88rem}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.r{font-weight:600}
+.r.g{color:var(--good)} .r.m{color:var(--mid)} .r.b{color:var(--low)}
+
+/* trial */
+.step{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 12px}
+.step .ctl{display:flex;align-items:center;gap:10px}
+.step button{width:40px;height:40px;font:inherit;font-size:1.2rem;font-weight:600;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.step output{min-width:2ch;text-align:center;font-weight:600;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.bar{position:relative;height:12px;background:var(--surface-2);border-radius:6px}
+.bar .fill{display:block;height:100%;width:0;background:var(--accent);border-radius:6px}
+.bar .thr{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--chalk);border-radius:2px}
+
+textarea{min-height:300px;line-height:1.5;resize:vertical}
+.status{font-size:.88rem;color:var(--muted);min-height:1.4em}
+.empty{color:var(--muted);font-style:italic}
+.src{font-size:.88rem;color:var(--muted);display:flex;flex-direction:column;gap:6px;padding-left:1.2em}
+footer{padding-top:40px}
+</style>
+
+<div class="wrap">
+  <nav class="nav" aria-label="Разделы страницы">
+    <div class="chips">
+      <a class="chip" href="#where">Где нужен</a>
+      <a class="chip" href="#choose">Выбор модели</a>
+      <a class="chip" href="#cost">Стоимость</a>
+      <a class="chip" href="#answers">Возражения</a>
+      <a class="chip" href="#trial">14 дней</a>
+      <a class="chip" href="#plan">Предложение</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <p class="hand">все цифры на странице можно менять пальцем</p>
+    <h1>Мне нужен планшет. Вот зачем и сколько это стоит.</h1>
+    <p class="lead">Я учусь на нестационарном обучении, развиваю бренд одежды, изучаю психиатрию и анатомию, читаю, готовлю и делаю презентации и макеты для бренда. У меня есть стационарный компьютер, телефон и старый планшет. Он лагает, не держит заряд, в нём мало памяти и маленький экран. Ниже видно, <mark>что именно они не закрывают</mark>, во что обойдётся новый планшет и как купить его без риска. Пользоваться буду каждый день или несколько дней в неделю, и он пригодится мне в университете дальше.</p>
+    <dl class="quick">
+      <div><dt>Первый вариант</dt><dd id="q-a"></dd></div>
+      <div><dt>Второй вариант</dt><dd id="q-b"></dd></div>
+      <div><dt>Чтобы не ошибиться</dt><dd>Онлайн-покупка и 14 дней на пробу. По правилам ЕС на возврат обычно есть 14 дней, условия уточню в магазине</dd></div>
+    </dl>
+    <div class="concerns">
+      <h3>Что вас волнует больше всего?</h3>
+      <div class="seg" role="group" aria-label="Выберите вопрос">
+        <button type="button" data-goto="ans-price">Цена</button>
+        <button type="button" data-goto="ans-pc">Хватит компьютера и телефона</button>
+        <button type="button" data-goto="ans-study">Нужно ли это для учёбы</button>
+        <button type="button" data-goto="ans-focus">Не забросит ли</button>
+        <button type="button" data-goto="choose">Какую модель</button>
+      </div>
+    </div>
+  </header>
+
+  <section id="where">
+    <div class="stack">
+      <h2>Где планшет мне нужен</h2>
+      <p class="sec-lead">Шесть занятий, от самых сильных доводов к самому слабому. У каждого есть оценка, насколько честно он оправдывает покупку.</p>
+
+      <details class="card" open>
+        <summary><span class="ct">Учёба на нестационарном</span><span class="tag hi">Сильный довод</span></summary>
+        <div class="cb">
+          <dl>
+            <dt>Что мешает без планшета</dt>
+            <dd>Телефон мал для слайдов и методичек в PDF. Стационарный компьютер не возьмёшь на занятие и консультацию, и формулу или схему на нём от руки не напишешь.</dd>
+            <dt>Что меняется</dt>
+            <dd>Конспект пером прямо на слайдах и в PDF, все материалы курса в одном устройстве, карточки для повторения по дороге.</dd>
+            <dt>Как проверить</dt>
+            <dd>Через месяц я покажу папку с конспектами и размеченными материалами.</dd>
+          </dl>
+          <p class="hrs"><span class="num" id="rd-study">6</span> ч в неделю по моей оценке</p>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary><span class="ct">Бренд одежды</span><span class="tag hi">Сильный довод</span></summary>
+        <div class="cb">
+          <dl>
+            <dt>Что мешает без планшета</dt>
+            <dd>Эскиз мышью рисовать медленно. Бумажный эскиз нельзя быстро поправить и отправить швее или поставщику. На телефоне экран слишком мал.</dd>
+            <dt>Что меняется</dt>
+            <dd>Рисунок пером на большом экране, правки поверх фото образцов ткани, мудборды и референсы под рукой, готовый эскиз уходит в мессенджер за минуту.</dd>
+            <dt>Предел</dt>
+            <dd>Лекала и технические паспорта изделий остаются за компьютером.</dd>
+          </dl>
+          <p class="hrs"><span class="num" id="rd-brand">4</span> ч в неделю по моей оценке</p>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary><span class="ct">Презентации и дизайн для бренда</span><span class="tag mid">Средне-сильный довод</span></summary>
+        <div class="cb">
+          <dl>
+            <dt>Что делаю</dt>
+            <dd>Презентации для учёбы, мудборды, коллекции референсов, посты и макеты для бренда в Canva, Figma, Google Slides и PowerPoint.</dd>
+            <dt>Где планшет удобен</dt>
+            <dd>Набросать и показать макет на ходу, поправить пером или пальцем, сразу отправить. На большом экране это заметно удобнее, чем на телефоне.</dd>
+            <dt>Честно</dt>
+            <dd>Для долгой вёрстки презентации лучше клавиатура, а у большинства моделей она продаётся отдельно (в комплекте только у Yoga Tab Plus). Тяжёлую векторную работу и подготовку к производству лучше делать на компьютере.</dd>
+          </dl>
+          <p class="hrs"><span class="num" id="rd-design">3</span> ч в неделю по моей оценке</p>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary><span class="ct">Психиатрия и самообучение</span><span class="tag hi">Сильный довод</span></summary>
+        <div class="cb">
+          <dl>
+            <dt>Что мешает без планшета</dt>
+            <dd>Научные статьи и руководства в PDF неудобно читать с пометками на телефоне. За компьютером чтение превращается в сидение за столом.</dd>
+            <dt>Что меняется</dt>
+            <dd>Подчёркивания и заметки пером в PDF, схемы синдромов и механизмов действия от руки, видеолекции и карточки для повторения в любом месте.</dd>
+            <dt>Как проверить</dt>
+            <dd>Я покажу набор прочитанных и размеченных материалов.</dd>
+          </dl>
+          <p class="hrs"><span class="num" id="rd-psy">4</span> ч в неделю по моей оценке</p>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary><span class="ct">Книги и атласы по анатомии</span><span class="tag hi">Сильный довод</span></summary>
+        <div class="cb">
+          <dl>
+            <dt>Где планшет лучше</dt>
+            <dd>Анатомические атласы и учебники со сложными цветными иллюстрациями, большие PDF, увеличение мелких структур, подписи и пометки пером на самой странице. На телефоне такая страница нечитаема, e-ink передаёт цвет слабо, а стационарный компьютер не возьмёшь с собой.</dd>
+            <dt>Что важно при выборе</dt>
+            <dd>Атласы весят сотни мегабайт каждый, а с годами их будет много. Поэтому нужна память от 256 ГБ или слот microSD. Крупный яркий экран делает иллюстрации читаемее. Но планшет весит 600–650 г, и несколько часов подряд с ним тяжелее, чем с электронной книгой.</dd>
+            <dt>Честно</dt>
+            <dd>Для долгого чтения художественной прозы электронная книга на e-ink мягче для глаз и легче.</dd>
+          </dl>
+          <p class="hrs"><span class="num" id="rd-books">5</span> ч в неделю по моей оценке</p>
+        </div>
+      </details>
+
+      <details class="card">
+        <summary><span class="ct">Кулинария</span><span class="tag low">Слабый довод, бонус</span></summary>
+        <div class="cb">
+          <dl>
+            <dt>Честно</dt>
+            <dd>Рецепт можно открыть и на телефоне. Покупать планшет ради кухни не стоит.</dd>
+            <dt>Что добавляет планшет</dt>
+            <dd>Большой экран на подставке, видеорецепты и таймеры рядом с текстом рецепта.</dd>
+          </dl>
+          <p class="hrs"><span class="num" id="rd-kitchen">2</span> ч в неделю по моей оценке</p>
+        </div>
+      </details>
+
+      <div class="panel">
+        <h3>Чего планшет не заменит</h3>
+        <ul>
+          <li>Длинные тексты и курсовые лучше печатать на компьютере.</li>
+          <li>Лекала, технические паспорта, векторные логотипы и тяжёлые макеты остаются на компьютере.</li>
+          <li>Привычка не появится сама. Поэтому ниже есть условия: возврат в течение 14 дней и отчёт через месяц.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="choose">
+    <div class="stack">
+      <h2>Выбор модели</h2>
+      <p class="sec-lead">Десять планшетов разных брендов. Для моих задач важны перо, размер экрана (атласы с иллюстрациями), память (большие PDF), срок обновлений и клавиатура (презентации). Метка «уточнить цену» значит, что цена взята из акции, утечки или публикации прошлых месяцев. Цены ориентировочные, для Эстонии проверьте их в магазинах.</p>
+
+      <div class="panel">
+        <div class="srow">
+          <label for="f-budget">Бюджет до, € (с учётом пера)</label>
+          <output id="o-budget" class="num"></output>
+          <input type="range" id="f-budget" min="250" max="1000" step="10">
+        </div>
+        <div class="seg" id="f-os" role="group" aria-label="Система">
+          <button type="button" data-os="all" aria-pressed="true">Любая система</button>
+          <button type="button" data-os="android" aria-pressed="false">Android</button>
+          <button type="button" data-os="ios" aria-pressed="false">iPad</button>
+        </div>
+        <div class="stack" style="gap:8px">
+          <label class="check" for="f-pen"><input type="checkbox" id="f-pen"><span>Перо в комплекте</span></label>
+          <label class="check" for="f-big"><input type="checkbox" id="f-big"><span>Экран от 11 дюймов</span></label>
+          <label class="check" for="f-sd"><input type="checkbox" id="f-sd"><span>Есть слот microSD</span></label>
+          <label class="check" for="f-256"><input type="checkbox" id="f-256"><span>Память от 256 ГБ или слот microSD (для атласов)</span></label>
+        </div>
+        <div class="seg" id="f-sort" role="group" aria-label="Сортировка">
+          <button type="button" data-sort="price" aria-pressed="true">Сначала дешевле</button>
+          <button type="button" data-sort="size" aria-pressed="false">Сначала крупнее экран</button>
+          <button type="button" data-sort="upd" aria-pressed="false">Сначала дольше обновления</button>
+        </div>
+      </div>
+      <p class="status" id="count" role="status"></p>
+      <div id="tlist" class="tlist"></div>
+
+      <div class="note">
+        <strong>Мой выбор</strong>
+        <ul>
+          <li><strong>Основной:</strong> Lenovo Idea Tab Pro, 256 ГБ. Перо в комплекте, 256 ГБ и microSD под библиотеку атласов, экран 12,7″.</li>
+          <li><strong>С запасом по бюджету:</strong> Idea Tab Pro Gen 2. Экран 13″ с более высоким разрешением и более новый процессор. Моё перо от Idea Tab Pro к нему, по данным Lenovo, подходит, но совместимость я проверю.</li>
+          <li>Yoga Tab Plus, iPad и Galaxy Tab S11 в мой план не входят: они дороже, а добавляют то, что мне нужно не каждый день.</li>
+        </ul>
+      </div>
+
+      <h3>Сравнение двух выбранных вариантов</h3>
+      <p class="hint">Вариант 1 и вариант 2 выбираются кнопками на карточках или списками в разделе «Стоимость».</p>
+      <div class="scroll"><table><thead id="cmphead"></thead><tbody id="cmpbody"></tbody></table></div>
+      <div class="note">
+        <strong>Что даёт разница</strong>
+        <ul id="diffs"></ul>
+      </div>
+      <p class="hint">Цены на планшеты в 2026 году менялись. Например, Apple подняла цену базового iPad в США на $100 в июне. Распродажи вроде €299 на Idea Tab Pro бывают, но не гарантированы.</p>
+    </div>
+  </section>
+
+  <section id="cost">
+    <div class="stack">
+      <h2>Сколько это стоит на деле</h2>
+      <p class="sec-lead">В карточках внизу можно выбрать любые две модели из каталога и поменять цену под местные магазины. Всё пересчитывается.</p>
+
+      <div class="panel">
+        <h3>Что у меня уже есть</h3>
+        <label class="check" for="ownPen"><input type="checkbox" id="ownPen"><span>Перо от Idea Tab Pro у меня уже есть</span></label>
+        <p class="hint">Это экономит деньги только на Idea Tab Pro Gen 2: он продаётся без пера, а Lenovo указывает Tab Pen Plus как подходящее. Проверьте совместимость на сайте Lenovo. У Idea Tab Pro перо и так в комплекте, у Yoga Tab Plus другое перо (Tab Pen Pro), для Samsung, Xiaomi, OnePlus и Apple ваше перо не подходит.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Как покрываем сумму</h3>
+        <div class="seg" role="group" aria-label="Кто платит">
+          <button type="button" data-fund="full" aria-pressed="false">Подарок целиком</button>
+          <button type="button" data-fund="half" aria-pressed="true">Пополам</button>
+          <button type="button" data-fund="custom" aria-pressed="false">Своя сумма от родителей</button>
+        </div>
+        <label id="custom-wrap" hidden>Родители дают, €
+          <input id="custom" type="number" inputmode="decimal" min="0" step="10">
+        </label>
+        <div class="grid2">
+          <label for="oldSale">Продам старый планшет за, €
+            <input id="oldSale" type="number" inputmode="decimal" min="0" step="10">
+          </label>
+          <label for="years">Срок использования
+            <select id="years">
+              <option value="2">2 года</option>
+              <option value="3">3 года</option>
+              <option value="4">4 года</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Часы в неделю, где планшет лучший инструмент</h3>
+        <div id="sliders" class="stack" style="gap:12px"></div>
+        <p class="total">Всего <strong class="num" id="hrsTotal">19</strong> ч в неделю. Расчёт идёт на 46 недель в году. Это мои оценки, а не измерения.</p>
+      </div>
+
+      <div class="models">
+        <article class="mcard">
+          <label for="sel-a">Вариант 1
+            <select id="sel-a"></select>
+          </label>
+          <p class="sub" id="sub-a"></p>
+          <div class="grid2">
+            <label for="price-a">Цена, €
+              <input id="price-a" type="number" inputmode="decimal" min="0" step="1">
+            </label>
+            <label for="extra-a">Перо и аксессуары, €
+              <input id="extra-a" type="number" inputmode="decimal" min="0" step="1">
+            </label>
+          </div>
+          <p class="hint" id="hint-a"></p>
+          <dl class="out">
+            <div class="wide"><dt>К оплате</dt><dd id="tot-a"></dd></div>
+            <div><dt>Родители</dt><dd id="par-a"></dd></div>
+            <div><dt>Я</dt><dd id="mine-a"></dd></div>
+            <div><dt>Час использования</dt><dd id="hour-a"></dd></div>
+            <div><dt>В месяц</dt><dd id="month-a"></dd></div>
+          </dl>
+          <button type="button" class="btn ghost pick" data-model="a" aria-pressed="true">Выбрано для предложения</button>
+        </article>
+
+        <article class="mcard">
+          <label for="sel-b">Вариант 2
+            <select id="sel-b"></select>
+          </label>
+          <p class="sub" id="sub-b"></p>
+          <div class="grid2">
+            <label for="price-b">Цена, €
+              <input id="price-b" type="number" inputmode="decimal" min="0" step="1">
+            </label>
+            <label for="extra-b">Перо и аксессуары, €
+              <input id="extra-b" type="number" inputmode="decimal" min="0" step="1">
+            </label>
+          </div>
+          <p class="hint" id="hint-b"></p>
+          <dl class="out">
+            <div class="wide"><dt>К оплате</dt><dd id="tot-b"></dd></div>
+            <div><dt>Родители</dt><dd id="par-b"></dd></div>
+            <div><dt>Я</dt><dd id="mine-b"></dd></div>
+            <div><dt>Час использования</dt><dd id="hour-b"></dd></div>
+            <div><dt>В месяц</dt><dd id="month-b"></dd></div>
+          </dl>
+          <button type="button" class="btn ghost pick" data-model="b" aria-pressed="false">Выбрать для предложения</button>
+        </article>
+      </div>
+      <p class="note" id="delta"></p>
+      <p class="hint">Цена часа показывает стоимость использования, а не экономию. Планшет сам ничего не окупает: он оправдан, только если я пользуюсь им в те часы, что указаны выше.</p>
+    </div>
+  </section>
+
+  <section id="answers">
+    <div class="stack">
+      <h2>Вопросы, которые вы зададите</h2>
+      <p class="sec-lead">Короткие ответы на самые вероятные возражения.</p>
+
+      <details class="card" id="ans-price">
+        <summary><span class="ct">«Это дорого»</span></summary>
+        <div class="cb">
+          <p>Есть модели с пером в комплекте от €299. Фильтр «Бюджет» в каталоге показывает, что можно взять за любую сумму.</p>
+          <ul>
+            <li>Сумму уменьшает продажа старого планшета и моя доля.</li>
+            <li>Цены иногда падают в распродажи. Ближайшая большая, Black Friday, 27 ноября 2026 года. Idea Tab Pro в таких акциях уже продавался за €299.</li>
+            <li>Покупка в интернет-магазине с возвратом в течение 14 дней.</li>
+          </ul>
+          <p id="dyn-cost"></p>
+        </div>
+      </details>
+
+      <details class="card" id="ans-pc">
+        <summary><span class="ct">«Есть же компьютер и телефон»</span></summary>
+        <div class="cb">
+          <p>Я не прошу заменить их. Я прошу закрыть то, что ни один из них не делает хорошо. Мой компьютер:</p>
+          <div class="seg" role="group" aria-label="Тип компьютера">
+            <button type="button" data-pc="desktop" aria-pressed="true">Стационарный</button>
+            <button type="button" data-pc="laptop" aria-pressed="false">Ноутбук</button>
+          </div>
+          <div class="scroll">
+            <table>
+              <thead><tr><th>Задача</th><th>Компьютер</th><th>Телефон</th><th>Планшет</th></tr></thead>
+              <tbody id="pcbody"></tbody>
+            </table>
+          </div>
+          <p id="pcnote"></p>
+        </div>
+      </details>
+
+      <details class="card" id="ans-study">
+        <summary><span class="ct">«Для учёбы это не нужно»</span></summary>
+        <div class="cb">
+          <p>Если я не смогу назвать конкретные случаи, довод слабый. Вот три, которые я проверю за первый месяц:</p>
+          <ul>
+            <li>Конспекты пером на занятиях и консультациях.</li>
+            <li>Методички и статьи в PDF с пометками.</li>
+            <li>Карточки для повторения перед экзаменами.</li>
+            <li>Атласы и учебники по анатомии, которые на телефоне не прочитать.</li>
+          </ul>
+          <p>Планирую пользоваться каждый день или несколько дней в неделю, и в университете он пригодится дальше. Через месяц покажу результат. Если планшет не прижился, у нас есть 14 дней на возврат, пока магазин принимает комплект.</p>
+        </div>
+      </details>
+
+      <details class="card" id="ans-old">
+        <summary><span class="ct">«У тебя есть старый планшет»</span></summary>
+        <div class="cb">
+          <p>Отметьте, что из этого правда про старый планшет:</p>
+          <div id="oldList" class="stack" style="gap:8px"></div>
+          <div id="oldOut"></div>
+        </div>
+      </details>
+
+      <details class="card" id="ans-focus">
+        <summary><span class="ct">«Будешь сидеть в играх и соцсетях»</span></summary>
+        <div class="cb">
+          <ul>
+            <li>На Android есть Digital Wellbeing с таймерами приложений. На iPad есть «Экранное время». Я поставлю лимиты на соцсети.</li>
+            <li>На время занятий включаю режим «Не беспокоить».</li>
+            <li>Через месяц показываю экранное время и сделанную работу.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" id="ans-cheaper">
+        <summary><span class="ct">«А нельзя подешевле или б/у?»</span></summary>
+        <div class="cb">
+          <ul>
+            <li>Подешевле можно. В каталоге есть Idea Tab Plus от €299 и Galaxy Tab S10 FE в акции около €400, оба с пером в комплекте.</li>
+            <li>Они слабее: у Idea Tab Plus экран 90 Гц и процессор Dimensity 6400, у S10 FE экран меньше 11 дюймов. Для конспектов хватит, для эскизов и нескольких окон скромнее.</li>
+            <li>Б/у возможен, но без гарантии магазина и с риском изношенной батареи. А батарея как раз главная беда моего старого планшета.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" id="ans-ipad">
+        <summary><span class="ct">«А почему не iPad?»</span></summary>
+        <div class="cb">
+          <ul>
+            <li>У iPad есть Procreate, самое популярное приложение для эскизов, и лучшие программы для рукописных конспектов. Если эскизы одежды станут главным занятием, iPad стоит сравнить всерьёз.</li>
+            <li>Но Apple Pencil покупается отдельно, и ваше перо от Idea Tab Pro к iPad не подходит. Базовый iPad с Pencil выходит примерно в €490, iPad Air на M4 с Pencil примерно в €760.</li>
+            <li>На Android тоже есть Clip Studio Paint, Infinite Painter и Concepts. Для конспектов и PDF у Samsung с S Pen в комплекте отличные приложения.</li>
+            <li>Базовый iPad на чипе A16 не поддерживает Apple Intelligence.</li>
+            <li>Из техники Apple у меня iPhone и наушники. Mac есть у девушки, но он мне не принадлежит. iPhone и iPad быстро обмениваются фото и файлами (AirDrop, iCloud). Это удобно, но не заменяет нужных функций.</li><li>Наушники Apple работают с Android-планшетом как обычные Bluetooth-наушники. Теряется только автоматическое переключение между устройствами Apple.</li>
+            <li>У меня компьютер на Windows, поэтому AirDrop и Handoff с ним не работают. С любым планшетом файлы с компьютера ходят через облако (iCloud, Google Drive, OneDrive) или кабель.</li>
+            <li>Перо от Idea Tab Pro, которое у меня уже есть, подходит только к Lenovo. На iPad оно бесполезно. Оно экономит деньги только на Idea Tab Pro Gen 2, у которого пера в комплекте нет.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="trial">
+    <div class="stack">
+      <h2>Пробные 14 дней</h2>
+      <p class="sec-lead">Заполняется после покупки. Это мой способ доказать, что планшет нужен: если порог не пройден, возвращаем его в магазин.</p>
+      <div class="panel">
+        <div id="steppers" class="stack" style="gap:12px"></div>
+        <div class="bar" aria-hidden="true"><span class="fill" id="barFill"></span><span class="thr" id="barThr"></span></div>
+        <p id="verdict" role="status"></p>
+      </div>
+      <label for="report">Отчёт для родителей
+        <textarea id="report" readonly style="min-height:120px"></textarea>
+      </label>
+      <div class="seg">
+        <button type="button" class="btn" id="copyReport">Скопировать отчёт</button>
+      </div>
+      <p class="status" id="status2" role="status"></p>
+    </div>
+  </section>
+
+  <section id="plan">
+    <div class="stack">
+      <h2>Моё предложение</h2>
+      <p class="sec-lead">Выберите условия. Текст ниже собирается сам, его можно скопировать и отправить. Перед этим лучше спросить родителей, какую сумму они готовы потратить, и только потом называть свою долю.</p>
+      <div class="panel">
+        <h3>Модель</h3>
+        <div class="seg" role="group" aria-label="Модель для предложения">
+          <button type="button" data-model2="a" aria-pressed="true"></button>
+          <button type="button" data-model2="b" aria-pressed="false"></button>
+        </div>
+        <h3>Условия с моей стороны</h3>
+        <div id="conds" class="stack" style="gap:10px"></div>
+      </div>
+      <label for="offer">Текст предложения
+        <textarea id="offer" readonly></textarea>
+      </label>
+      <div class="seg">
+        <button type="button" class="btn" id="copy">Скопировать текст</button>
+      </div>
+      <p class="status" id="status" role="status"></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="stack">
+      <h3>Источники</h3>
+      <p class="hint">Цены и характеристики собраны 17 октября 2026 из объявлений магазинов и обзоров. Цены в Эстонии могут отличаться, проверьте их перед покупкой. Выбор, цифры и отметки на этой странице хранятся в вашем браузере.</p>
+      <ul class="src" id="srcList"></ul>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var KEY='tablet-case-v6', WEEKS=46;
+
+  /* ---------- catalog ---------- */
+  var T=[
+    {id:'idea',name:'Lenovo Idea Tab Pro',cfg:'8/256 ГБ',os:'Android',price:349,priceNote:'Магазин Paradigit, перо в комплекте. В распродажи бывает €299.',conf:'ok',extra:0,
+     size:12.7,res:'2944×1840',hz:144,nits:'400 нит',chip:'Dimensity 8300',ram:8,storage:256,sd:'microSD до 1 ТБ',pen:'in',penName:'Tab Pen Plus',kb:'out',weight:620,battery:'10 200 мАч',
+     upd:'Обещано 2 версии Android и 4 года патчей',until:2029,
+     me:'Большой экран и перо в комплекте за небольшие деньги. Для конспектов, PDF и эскизов хватает.',
+     con:'Яркость скромнее, 8 ГБ памяти, клавиатура отдельно, обновления короче, чем у Samsung.',
+     src:[['Notebookcheck: Idea Tab Pro по €299 с пером, тест батареи','https://www.notebookcheck.com/Active-Stylus-3k-Touchscreen-12-7-Zoll-8-GB-RAM-256-GB-Flash-Lenovo-Android-Tablet-im-Angebot.1325190.0.html'],['Paradigit: Idea Tab Pro 256 ГБ за €349 с пером','https://www.paradigit.ie/lenovo-idea-tab-pro-12-7-inch-256-gb-wi-fi-grey/21750206/product'],['Smartprix: характеристики Idea Tab Pro','https://us.smartprix.com/tablets/lenovo-idea-tab-pro-ppd1r4owjhcc'],['GSMArena: обещания по обновлениям Idea Tab Pro','https://www.gsmarena.com/lenovo_idea_tab_pro_launched_in_india_-news-66961.php']]},
+    {id:'yoga',name:'Lenovo Yoga Tab Plus',cfg:'16/256 ГБ',os:'Android',price:709,priceNote:'Магазин LMT, комплект с клавиатурой и пером. От €649 по агрегатору.',conf:'ok',extra:0,
+     size:12.7,res:'2944×1840',hz:144,nits:'650 нит, до 900 в HDR',chip:'Snapdragon 8 Gen 3',ram:16,storage:256,sd:false,pen:'in',penName:'Tab Pen Pro',kb:'in',weight:640,battery:'10 200 мАч',
+     upd:'Патчи безопасности до 2029 года (по обзору Lon.TV)',until:2029,
+     me:'Почти ноутбук: клавиатура в комплекте, 16 ГБ памяти для нескольких окон, яркий антибликовый экран.',
+     con:'Самая высокая цена среди Lenovo, нет слота microSD, срок обновлений не длиннее, чем у дешёвого Idea Tab Pro.',
+     src:[['LMT: Yoga Tab Plus 16/256 ГБ, комплект с клавиатурой и пером','https://www.lmt.lv/en/shop/all-tablets/lenovo-yoga-tab-plus/16-gb-256-gb-zalganzila'],['Kimovil: Yoga Tab Plus от €649','https://www.kimovil.com/de/lenovo-yoga-tab-plus/antutu'],['Notebookcheck: яркость экрана Yoga Tab Plus','https://www.notebookcheck.com/Lenovo-Yoga-Tab-Plus-mit-Snapdragon-8-Gen-3-und-12-7-Zoll-144-Hz-HDR-Display-startet-in-den-Verkauf.956963.0.html'],['Lon.TV: обзор Yoga Tab Plus, обновления до 2029 года','https://blog.lon.tv/2025/06/03/the-lenovo-yoga-tab-plus-packs-a-lot-of-value-full-review']]},
+    {id:'idea2',name:'Lenovo Idea Tab Pro Gen 2',cfg:'8/256 ГБ',os:'Android',price:489,priceNote:'Notebookcheck, апрель 2026. Версия на 128 ГБ стоит €449.',conf:'ok',extra:0,extraUnknown:true,
+     size:13,res:'3504×2190',hz:144,nits:'400 нит',chip:'Snapdragon 8s Gen 4',ram:8,storage:256,sd:'есть слот microSD',pen:'out',penName:'Tab Pen Plus',kb:'out',weight:598,battery:'10 200 мАч',
+     upd:'Lenovo обещает 4 года патчей, обновления версий Android не подтверждены',until:2030,
+     me:'Новее первого поколения: экран 13 дюймов с более высоким разрешением, новее процессор, легче.',
+     con:'Перо в комплект не входит. Дороже первого поколения.',
+     src:[['Notebookcheck: Idea Tab Pro Gen 2 за €449 и €489','https://www.notebookcheck.com/Lenovo-Idea-Tab-Pro-Gen-2-startet-mit-Snapdragon-8s-Gen-4-fuer-449-Euro.1284564.0.html'],['Smartprix: Idea Tab Pro Gen 2','https://us.smartprix.com/tablets/lenovo-idea-tab-pro-gen-2-ppd1mqwp2y9m']]},
+    {id:'ideaplus',name:'Lenovo Idea Tab Plus',cfg:'8/128 ГБ',os:'Android',price:299,priceNote:'Цена «от» по Notebookcheck.',conf:'check',extra:0,
+     size:12.1,res:'2,5K',hz:90,nits:null,chip:'Dimensity 6400',ram:8,storage:128,sd:null,pen:'in',penName:'Tab Pen',kb:'out',weight:null,battery:null,
+     upd:'Обещано 2 версии Android и 4 года патчей',until:2029,
+     me:'Самый дешёвый вариант с пером. Хватит для конспектов и чтения.',
+     con:'Экран 90 Гц и процессор проще: для эскизов и нескольких окон заметно скромнее.',
+     src:[['Notebookcheck: Idea Tab Plus от €299','https://www.notebookcheck-cn.com/Lenovo-Idea-Tab-Plus.1172576.0.html'],['Notebookcheck: характеристики Idea Tab Plus','https://www.notebookcheck.it/Recensione-del-Lenovo-Yoga-Tab-Un-meraviglioso-tablet-Android-che-evidenzia-le-carenze-dell-iPad-Air.1137987.0.html']]},
+    {id:'s10fe',name:'Samsung Galaxy Tab S10 FE',cfg:'8/128 ГБ',os:'Android',price:400,priceNote:'Акция €399,99 на 30.06.2026. Цена по списку €579.',conf:'check',extra:0,
+     size:10.9,res:null,hz:90,nits:null,chip:'Exynos 1580',ram:8,storage:128,sd:'microSD до 2 ТБ',pen:'in',penName:'S Pen',kb:'out',weight:null,battery:null,
+     upd:'6 лет обновлений ОС и безопасности',until:2031,
+     me:'S Pen в комплекте и самый долгий срок обновлений среди недорогих. Хорош для конспектов и разметки PDF.',
+     con:'Экран меньше 11 дюймов и 90 Гц. €400 только в акцию.',
+     src:[['PC-WELT: Galaxy Tab S10 FE по €399,99, S Pen в комплекте','https://www.pcwelt.de/article/3179191/samsung-galaxy-tab-s10-fe-tiefstpreis-angebot-bei-amazon.html']]},
+    {id:'s11',name:'Samsung Galaxy Tab S11',cfg:'12/128 ГБ',os:'Android',price:899,priceNote:'Цена при запуске по утечке Notebookcheck. В магазинах может быть ниже.',conf:'check',extra:0,
+     size:11,res:'2560×1600',hz:120,nits:'до 1600 нит, AMOLED',chip:'Dimensity 9400+',ram:12,storage:128,sd:null,pen:'in',penName:'S Pen',kb:'out',weight:null,battery:'8 400 мАч',
+     upd:'7 лет обновлений',until:2032,
+     me:'Лучший экран и самый долгий срок обновлений в списке, S Pen в комплекте.',
+     con:'Самый дорогой вариант с Android. Экран 11 дюймов меньше, чем у Lenovo.',
+     src:[['Notebookcheck: утечка по Galaxy Tab S11, цены и 7 лет обновлений','https://www.notebookcheck.com/Leak-enthuellt-Samsung-Galaxy-Tab-S11-in-zwei-Farben-inklusive-Specs-7-Jahren-Updates-und-Europreisen.1093392.0.html'],['Smartworld: характеристики Galaxy Tab S11','https://www.smartworld.it/prezzi/samsung-galaxy-tab-s11/'],['Notebookcheck: утечка по S11, S11 Ultra и S10 Lite, S Pen','https://www.notebookcheck.it/Samsung-Galaxy-Tab-S11-Tab-S11-Ultra-e-Tab-S10-Lite-Tutti-i-prezzi-le-specifiche-e-le-configurazioni-trapelate-in-euro.1082545.0.html']]},
+    {id:'op3',name:'OnePlus Pad 3',cfg:'12/256 ГБ',os:'Android',price:599,priceNote:'Цена при запуске в Европе, Notebookcheck.',conf:'check',extra:0,extraUnknown:true,
+     size:13.2,res:'3392×2400',hz:144,nits:'900 нит',chip:'Snapdragon 8 Elite',ram:12,storage:256,sd:null,pen:'out',penName:'OnePlus Stylo 2',kb:'out',weight:null,battery:'12 140 мАч',
+     upd:null,until:null,
+     me:'Самый большой и яркий экран, много памяти и мощный процессор.',
+     con:'Перо покупается отдельно, сроки обновлений не найдены. Крупный планшет для переноски.',
+     src:[['Notebookcheck: OnePlus Pad 3, цены и характеристики','https://www.notebookcheck.com/OnePlus-Pad-3-mit-Snapdragon-8-Elite-und-13-2-Zoll-Display-startet-mit-Launch-Aktionen-im-Wert-von-319-Euro.1031123.0.html']]},
+    {id:'xp8',name:'Xiaomi Pad 8',cfg:'12/128 ГБ',os:'Android',price:450,priceNote:'€449,90 при запуске, версия на 256 ГБ на €50 дороже.',conf:'check',extra:0,extraUnknown:true,
+     size:11.2,res:'3,2K',hz:144,nits:'800 нит',chip:'Snapdragon 8s Gen 4',ram:12,storage:128,sd:null,pen:'out',penName:'Focus Pen Pro',kb:'out',weight:null,battery:'9 200 мАч',
+     upd:null,until:null,
+     me:'Быстрый планшет с 12 ГБ памяти за разумные деньги.',
+     con:'Перо отдельно, сроки обновлений не найдены.',
+     src:[['Notebookcheck: Xiaomi Pad 8, цена и характеристики','https://www.notebookcheck.net/Xiaomi-Pad-8-now-official-globally-with-144-Hz-display-and-mid-range-pricing.1237852.0.html']]},
+    {id:'ipad',name:'Apple iPad (A16)',cfg:'128 ГБ',os:'iPadOS',price:399,priceNote:'Список €399 (апрель 2025). В США цена выросла до $449 в июне 2026, в ЕС проверьте.',conf:'check',extra:89,extraNote:'Apple Pencil (USB-C) €89 по iCulture.',
+     size:11,res:null,hz:60,nits:null,chip:'Apple A16',ram:null,storage:128,sd:false,pen:'out',penName:'Apple Pencil (USB-C)',kb:'out',weight:null,battery:null,
+     upd:'Письменного обещания нет, iPad обычно обновляют много лет',until:null,
+     me:'Procreate для эскизов одежды и лучшие приложения для рукописных конспектов.',
+     con:'Перо платное, A16 без Apple Intelligence, экран 60 Гц.',
+     src:[['Macwelt: iPad A16, список €399','https://www.macwelt.de/article/2762446/ipad-a16-auf-neuem-tiefstpreis-bei-amazon-369-statt-399-euro.html'],['MacRumors: цена iPad A16 и слухи про iPad 12','https://macrumors.com/2026/07/22/12th-generation-ipad-rumor-recap']]},
+    {id:'air',name:'Apple iPad Air 11" (M4)',cfg:'128 ГБ',os:'iPadOS',price:669,priceNote:'Цена в Нидерландах с марта 2026. Прошлая модель на M3 в сделках около €499.',conf:'ok',extra:89,extraNote:'Apple Pencil (USB-C) €89, Pencil Pro €149.',
+     size:11,res:null,hz:null,nits:null,chip:'Apple M4',ram:null,storage:128,sd:false,pen:'out',penName:'Apple Pencil Pro или USB-C',kb:'out',weight:null,battery:null,
+     upd:'Письменного обещания нет, iPad обычно обновляют много лет',until:null,
+     me:'Самый мощный вариант, Procreate работает на полной скорости.',
+     con:'Дорого, и перо платное. Для моих задач избыточен.',
+     src:[['iCulture: цены iPad Air M4 и Apple Pencil','https://www.iculture.nl/nieuws/ipad-air-2026-prijs/'],['Macwelt: iPad Air M3 по €499, список €589','https://www.macwelt.de/article/2858728/ipad-air-11-m3-wlan-allzeit-tief-499-euro-amazon.html']]}
+  ];
+  function tb(id){for(var i=0;i<T.length;i++){if(T[i].id===id){return T[i];}}return null;}
+
+  var HRS=[['study','Учёба'],['brand','Бренд одежды'],['design','Презентации и дизайн для бренда'],['psy','Психиатрия и самообучение'],['books','Книги и атласы по анатомии'],['kitchen','Кулинария']];
+  var DEF={slot:{a:'idea',b:'idea2'},ownPen:true,model:'a',price:{},extra:{},oldSale:0,years:3,
+    hours:{study:6,brand:4,design:3,psy:4,books:5,kitchen:2},fund:'half',custom:300,pc:'desktop',old:['slow','mem','bat','screen'],
+    cond:['c14','creport'],trial:{days:0,notes:0,sketches:0,mats:0,thr:8},
+    f:{budget:900,pen:false,big:false,sd:false,s256:true,os:'all'},sort:'price'};
+  var OLD=[['slow','Сильно лагает, тормозит с PDF и несколькими приложениями'],['mem','Не хватает памяти'],['pen','Нет пера или перо работает плохо'],['screen','Экран мал для документов и эскизов'],['sec','Нет обновлений безопасности'],['bat','Не держит заряд'],['sell','Хочу его продать, это снизит цену покупки']];
+  var CONDS=[
+    ['c14','Покупаем онлайн, первые 14 дней я веду дневник. Если пользы мало, возвращаем (если магазин принимает комплект).'],
+    ['cold','Продаю старый планшет, деньги идут в покупку.'],
+    ['creport','Через месяц показываю, что делал на планшете: конспекты, эскизы, статьи.'],
+    ['cdnd','Ставлю таймеры приложений и режим «Не беспокоить» на время занятий.'],
+    ['cbf','Следим за ценами до Black Friday (27 ноября) и покупаем по лучшей цене.']
+  ];
+  var PCROWS=[
+    ['Конспект пером на занятии',{laptop:'b',desktop:'b'},'b','g'],
+    ['Читать и размечать PDF',{laptop:'m',desktop:'m'},'b','g'],
+    ['Атлас анатомии с иллюстрациями',{laptop:'m',desktop:'m'},'b','g'],
+    ['Эскиз изделия пером',{laptop:'b',desktop:'b'},'b','g'],
+    ['Презентации и макеты для бренда',{laptop:'g',desktop:'g'},'b','m'],
+    ['Печатать длинный текст',{laptop:'g',desktop:'g'},'b','m'],
+    ['Лекала и техпаспорта',{laptop:'g',desktop:'g'},'b','b'],
+    ['Взять с собой на занятие',{laptop:'m',desktop:'b'},'g','g']
+  ];
+  var RT={g:'хорошо',m:'терпимо',b:'плохо'};
+
+  /* ---------- state ---------- */
+  function clone(o){return JSON.parse(JSON.stringify(o));}
+  function load(){
+    var d=clone(DEF);
+    try{
+      var r=localStorage.getItem(KEY);
+      if(r){var p=JSON.parse(r);
+        Object.keys(d).forEach(function(k){
+          if(p&&p[k]!==undefined){
+            if(d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k])){Object.assign(d[k],p[k]);}else{d[k]=p[k];}
+          }
+        });
+      }
+    }catch(e){}
+    if(!tb(d.slot.a)){d.slot.a=DEF.slot.a;}
+    if(!tb(d.slot.b)){d.slot.b=DEF.slot.b;}
+    if(d.model!=='a'&&d.model!=='b'){d.model='a';}
+    return d;
+  }
+  var S=load();
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+  function $(id){return document.getElementById(id);}
+  function has(o,k){return Object.prototype.hasOwnProperty.call(o,k);}
+  function num(v){var n=parseFloat(String(v).replace(',','.'));return isFinite(n)&&n>=0?n:0;}
+  function eur(n){return '€'+Math.round(n).toLocaleString('ru-RU');}
+  function eur2(n){return isFinite(n)?'€'+n.toFixed(2).replace('.',','):'не посчитать';}
+  function dec(n){return String(n).replace('.',',');}
+  function totalHours(){var t=0;HRS.forEach(function(h){t+=S.hours[h[0]];});return t;}
+  function cur(k){return tb(S.slot[k]);}
+  function effPrice(id){return has(S.price,id)?S.price[id]:tb(id).price;}
+  function isLen(t){return t.id==='idea2';}
+  function effExtra(id){
+    if(has(S.extra,id)){return S.extra[id];}
+    var t=tb(id);
+    if(S.ownPen&&isLen(t)){return 0;}
+    return t.extra;
+  }
+  function penUnknown(t){return t.extraUnknown&&!(S.ownPen&&isLen(t));}
+  function cost(t){return effPrice(t.id)+effExtra(t.id);}
+  function kit(t){
+    if(S.ownPen&&isLen(t)&&t.pen!=='in'){return 'ваше перо от Idea Tab Pro (Tab Pen Plus), совместимость проверить';}
+    if(t.pen==='in'){return 'в комплекте '+t.penName+(t.kb==='in'?' и клавиатура':'');}
+    return t.penName+' покупается отдельно';
+  }
+  function hasSd(t){return typeof t.sd==='string';}
+
+  function calc(k){
+    var id=S.slot[k];
+    var total=Math.max(0,effPrice(id)+effExtra(id)-S.oldSale);
+    var usage=totalHours()*WEEKS*S.years;
+    var parents=S.fund==='full'?total:(S.fund==='half'?total/2:Math.min(Math.max(0,S.custom),total));
+    return {total:total,parents:parents,mine:total-parents,perHour:usage>0?total/usage:NaN,perMonth:total/(S.years*12)};
+  }
+
+  /* ---------- catalog rendering ---------- */
+  function chipsFor(t){
+    var c=[];
+    c.push(t.pen==='in'?['hi','Перо в комплекте']:['low','Перо отдельно']);
+    if(t.kb==='in'){c.push(['hi','Клавиатура в комплекте']);}
+    c.push([t.size>=12?'hi':(t.size>=11?'mid':'low'),'Экран '+dec(t.size)+'″']);
+    if(t.until){c.push([t.until>=2031?'hi':'mid','Обновления до ~'+t.until]);}else{c.push(['low','Срок обновлений неизвестен']);}
+    if(hasSd(t)){c.push(['mid','microSD']);}
+    return c.map(function(x){return '<span class="tag '+x[0]+'">'+x[1]+'</span>';}).join('');
+  }
+  function anatNote(t){
+    var p=[];
+    if(t.size>=12){p.push('крупный экран ('+dec(t.size)+'″): страница атласа читается крупнее');}
+    else if(t.size>=11){p.push('экран '+dec(t.size)+'″: атлас читается, но мелкие подписи придётся увеличивать');}
+    else{p.push('экран '+dec(t.size)+'″ маловат для сложных иллюстраций');}
+    if(t.storage>=256){p.push(t.storage+' ГБ памяти'+(hasSd(t)?' и microSD':''));}
+    else if(hasSd(t)){p.push(t.storage+' ГБ, но есть microSD для библиотеки');}
+    else{p.push('только '+t.storage+' ГБ без microSD: библиотека из атласов займёт её быстро');}
+    return p.join('; ')+'.';
+  }
+  function cardHtml(t){
+    var a=S.slot.a===t.id,b=S.slot.b===t.id,ex=effExtra(t.id),pr=effPrice(t.id);
+    var line=ex>0?eur(pr)+' + перо '+eur(ex)+' = '+eur(pr+ex):eur(pr);
+    var note=t.priceNote+(ex>0&&t.extraNote?' '+t.extraNote:'')+(penUnknown(t)?' Цена пера не учтена.':'');
+    return '<article class="tcard'+((a||b)?' sel':'')+'">'+
+      '<header><div><h3>'+t.name+'</h3><span class="sub">'+t.cfg+' · '+t.os+'</span></div>'+(t.conf==='check'?'<span class="tag mid">уточнить цену</span>':'')+'</header>'+
+      '<div><div class="price">'+line+'</div><p class="hint">'+note+'</p></div>'+
+      '<div class="chips2">'+chipsFor(t)+'</div>'+
+      '<p><strong>Для моих задач.</strong> '+t.me+'</p>'+
+      '<p class="hint"><strong>Атласы по анатомии.</strong> '+anatNote(t)+'</p>'+
+      '<p class="hint"><strong>Минусы.</strong> '+t.con+'</p>'+
+      '<div class="slotbtns">'+
+        '<button type="button" class="btn ghost" data-pick="a" data-id="'+t.id+'" aria-pressed="'+(a?'true':'false')+'">Вариант 1</button>'+
+        '<button type="button" class="btn ghost" data-pick="b" data-id="'+t.id+'" aria-pressed="'+(b?'true':'false')+'">Вариант 2</button>'+
+      '</div></article>';
+  }
+  function filtered(){
+    var f=S.f;
+    var list=T.filter(function(t){
+      if(cost(t)>f.budget){return false;}
+      if(f.pen&&t.pen!=='in'){return false;}
+      if(f.big&&t.size<11){return false;}
+      if(f.sd&&!hasSd(t)){return false;}
+      if(f.s256&&t.storage<256&&!hasSd(t)){return false;}
+      if(f.os==='android'&&t.os!=='Android'){return false;}
+      if(f.os==='ios'&&t.os!=='iPadOS'){return false;}
+      return true;
+    });
+    list.sort(function(x,y){
+      if(S.sort==='size'){return y.size-x.size;}
+      if(S.sort==='upd'){return (y.until||0)-(x.until||0);}
+      return cost(x)-cost(y);
+    });
+    return list;
+  }
+  function v(x,suf){return (x===null||x===undefined)?'н/д':x+(suf||'');}
+  var CMP=[
+    ['Цена',function(t){var e=effExtra(t.id);return e>0?eur(effPrice(t.id))+' + перо '+eur(e):eur(effPrice(t.id));}],
+    ['Экран',function(t){return dec(t.size)+'″'+(t.res?', '+t.res:'');}],
+    ['Частота и яркость',function(t){return (t.hz?t.hz+' Гц':'частота н/д')+', '+(t.nits||'яркость н/д');}],
+    ['Процессор',function(t){return t.chip;}],
+    ['Память',function(t){return (t.ram?t.ram+' ГБ ОЗУ, ':'')+t.storage+' ГБ'+(hasSd(t)?', '+t.sd:(t.sd===false?', без microSD':''));}],
+    ['Перо',function(t){return kit(t);}],
+    ['Вес и батарея',function(t){return (t.weight?t.weight+' г':'вес н/д')+', '+(t.battery||'батарея н/д');}],
+    ['Обновления',function(t){return v(t.upd);}]
+  ];
+  function diffs(a,b){
+    var out=[],ca=cost(a),cb=cost(b),d=cb-ca,A=a.name,B=b.name;
+    if(a.id===b.id){return ['Выбрана одна и та же модель. Выберите другую во втором варианте.'];}
+    if(Math.abs(d)>=20){out.push((d>0?B:A)+' дороже на '+eur(Math.abs(d))+' с учётом пера.');}else{out.push('Цена с пером почти одинаковая.');}
+    if(a.pen!==b.pen){var w=a.pen==='in'?a:b,o=a.pen==='in'?b:a;out.push('У '+w.name+' перо в комплекте, у '+o.name+' его нужно докупать.');}
+    if(Math.abs(a.size-b.size)>=0.5){var bg=a.size>b.size?a:b,sm=a.size>b.size?b:a;out.push('Экран крупнее у '+bg.name+': '+dec(bg.size)+'″ против '+dec(sm.size)+'″.');}
+    if(a.ram&&b.ram&&a.ram!==b.ram){var m=a.ram>b.ram?a:b,l=a.ram>b.ram?b:a;out.push('Памяти больше у '+m.name+': '+m.ram+' ГБ против '+l.ram+' ГБ.');}
+    if(a.until&&b.until&&a.until!==b.until){var lg=a.until>b.until?a:b,sh=a.until>b.until?b:a;out.push('Обновления дольше у '+lg.name+': до ~'+lg.until+' против ~'+sh.until+'.');}
+    else if((a.until&&!b.until)||(!a.until&&b.until)){var k=a.until?a:b,u=a.until?b:a;out.push('У '+k.name+' обновления обещаны до ~'+k.until+', у '+u.name+' срок я не нашёл.');}
+    if(a.storage!==b.storage||hasSd(a)!==hasSd(b)){
+      var sa=a.storage+' ГБ'+(hasSd(a)?' + microSD':''),sb=b.storage+' ГБ'+(hasSd(b)?' + microSD':'');
+      out.push('Для библиотеки атласов: '+a.name+' даёт '+sa+', '+b.name+' даёт '+sb+'.');
+    }
+    if(a.kb!==b.kb){var kk=a.kb==='in'?a:b;out.push('Клавиатура входит в комплект только у '+kk.name+'.');}
+    if(hasSd(a)!==hasSd(b)&&(a.sd===false||b.sd===false)){var s=hasSd(a)?a:b;out.push('Слот microSD есть у '+s.name+', у второго варианта его нет.');}
+    if(a.os!==b.os){out.push('Один из вариантов на iPadOS: там есть Procreate для эскизов. На Android есть Clip Studio Paint, Infinite Painter и Concepts.');}
+    return out;
+  }
+
+  function renderCatalog(){
+    var list=filtered();
+    $('tlist').innerHTML=list.map(cardHtml).join('')||'<p class="empty">Под такие условия ничего не подошло. Поднимите бюджет или уберите галочки.</p>';
+    $('count').textContent='Показано '+list.length+' из '+T.length+'. Выбранные варианты остаются в сравнении ниже, даже если фильтр их скрыл.';
+    var a=cur('a'),b=cur('b');
+    $('cmphead').innerHTML='<tr><th>Параметр</th><th>'+a.name+' '+a.cfg+'</th><th>'+b.name+' '+b.cfg+'</th></tr>';
+    $('cmpbody').innerHTML=CMP.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1](a)+'</td><td>'+r[1](b)+'</td></tr>';}).join('');
+    $('diffs').innerHTML=diffs(a,b).map(function(x){return '<li>'+x+'</li>';}).join('');
+  }
+
+  /* ---------- build static UI ---------- */
+  HRS.forEach(function(h){
+    var row=document.createElement('div');row.className='srow';
+    row.innerHTML='<label for="h-'+h[0]+'">'+h[1]+'</label><output id="o-'+h[0]+'" class="num"></output><input type="range" id="h-'+h[0]+'" min="0" max="20" step="1">';
+    $('sliders').appendChild(row);
+    var inp=row.querySelector('input');inp.value=S.hours[h[0]];
+    inp.addEventListener('input',function(){S.hours[h[0]]=parseInt(inp.value,10)||0;render();});
+  });
+
+  ['a','b'].forEach(function(k){
+    var sel=$('sel-'+k);
+    sel.innerHTML=T.map(function(t){return '<option value="'+t.id+'">'+t.name+' ('+t.cfg+')</option>';}).join('');
+    sel.value=S.slot[k];
+    sel.addEventListener('change',function(){S.slot[k]=sel.value;syncInputs();render();});
+    $('price-'+k).addEventListener('input',function(){S.price[S.slot[k]]=num($('price-'+k).value);render();});
+    $('extra-'+k).addEventListener('input',function(){S.extra[S.slot[k]]=num($('extra-'+k).value);render();});
+  });
+  function syncInputs(){
+    ['a','b'].forEach(function(k){
+      $('sel-'+k).value=S.slot[k];
+      $('price-'+k).value=effPrice(S.slot[k]);
+      $('extra-'+k).value=effExtra(S.slot[k]);
+    });
+  }
+  syncInputs();
+
+  $('ownPen').checked=!!S.ownPen;
+  $('ownPen').addEventListener('change',function(){S.ownPen=$('ownPen').checked;syncInputs();render();});
+  $('oldSale').value=S.oldSale;
+  $('oldSale').addEventListener('input',function(){S.oldSale=num($('oldSale').value);render();});
+  $('years').value=String(S.years);
+  $('years').addEventListener('change',function(){S.years=parseInt($('years').value,10)||3;render();});
+  $('custom').value=S.custom;
+  $('custom').addEventListener('input',function(){S.custom=num($('custom').value);render();});
+
+  /* filters */
+  $('f-budget').value=S.f.budget;
+  $('f-budget').addEventListener('input',function(){S.f.budget=parseInt($('f-budget').value,10)||0;render();});
+  [['f-pen','pen'],['f-big','big'],['f-sd','sd'],['f-256','s256']].forEach(function(p){
+    $(p[0]).checked=!!S.f[p[1]];
+    $(p[0]).addEventListener('change',function(){S.f[p[1]]=$(p[0]).checked;render();});
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-os]'),function(b){
+    b.addEventListener('click',function(){S.f.os=b.getAttribute('data-os');render();});
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-sort]'),function(b){
+    b.addEventListener('click',function(){S.sort=b.getAttribute('data-sort');render();});
+  });
+  $('tlist').addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('[data-pick]'):null;
+    if(!b){return;}
+    S.slot[b.getAttribute('data-pick')]=b.getAttribute('data-id');
+    syncInputs();render();
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-fund]'),function(b){
+    b.addEventListener('click',function(){S.fund=b.getAttribute('data-fund');render();});
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-model]'),function(b){
+    b.addEventListener('click',function(){S.model=b.getAttribute('data-model');render();});
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-model2]'),function(b){
+    b.addEventListener('click',function(){S.model=b.getAttribute('data-model2');render();});
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-pc]'),function(b){
+    b.addEventListener('click',function(){S.pc=b.getAttribute('data-pc');render();});
+  });
+
+  function buildChecks(host,items,key){
+    items.forEach(function(it){
+      var l=document.createElement('label');l.className='check';
+      var c=document.createElement('input');c.type='checkbox';c.id=key+'-'+it[0];c.checked=S[key].indexOf(it[0])>-1;
+      var s=document.createElement('span');s.textContent=it[1];
+      c.addEventListener('change',function(){
+        var i=S[key].indexOf(it[0]);
+        if(c.checked&&i<0){S[key].push(it[0]);}
+        if(!c.checked&&i>-1){S[key].splice(i,1);}
+        render();
+      });
+      l.appendChild(c);l.appendChild(s);host.appendChild(l);
+    });
+  }
+  buildChecks($('oldList'),OLD,'old');
+  buildChecks($('conds'),CONDS,'cond');
+
+  /* trial diary */
+  var STEPS=[['days','Дней, когда планшет реально пригодился',14],['notes','Конспектов сделано',99],['sketches','Эскизов нарисовано',99],['mats','Статей и материалов размечено',99],['thr','Порог: сколько дней из 14 нужно',14]];
+  STEPS.forEach(function(s){
+    var row=document.createElement('div');row.className='step';
+    row.innerHTML='<span>'+s[1]+'</span><div class="ctl"><button type="button" aria-label="Меньше: '+s[1]+'">−</button><output class="num" id="st-'+s[0]+'"></output><button type="button" aria-label="Больше: '+s[1]+'">+</button></div>';
+    var b=row.querySelectorAll('button');
+    b[0].addEventListener('click',function(){S.trial[s[0]]=Math.max(0,S.trial[s[0]]-1);render();});
+    b[1].addEventListener('click',function(){S.trial[s[0]]=Math.min(s[2],S.trial[s[0]]+1);render();});
+    $('steppers').appendChild(row);
+  });
+
+  /* jump to a question */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-goto]'),function(b){
+    b.addEventListener('click',function(){
+      var t=$(b.getAttribute('data-goto'));if(!t){return;}
+      if(t.tagName==='DETAILS'){t.open=true;}
+      t.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+
+  /* highlight current section in the nav */
+  (function(){
+    if(!('IntersectionObserver' in window)){return;}
+    var links={};
+    Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(a){links[a.getAttribute('href').slice(1)]=a;});
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting){return;}
+        Object.keys(links).forEach(function(k){links[k].removeAttribute('aria-current');});
+        var l=links[e.target.id];
+        if(l){l.setAttribute('aria-current','true');}
+      });
+    },{rootMargin:'-20% 0px -70% 0px'});
+    Object.keys(links).forEach(function(k){var s=$(k);if(s){io.observe(s);}});
+  })();
+
+  /* sources */
+  (function(){
+    var seen={},items=[];
+    T.forEach(function(t){t.src.forEach(function(s){if(!seen[s[1]]){seen[s[1]]=1;items.push(s);}});});
+    $('srcList').innerHTML=items.map(function(s){return '<li><a href="'+s[1]+'" target="_blank" rel="noopener">'+s[0]+'</a></li>';}).join('');
+  })();
+
+  /* ---------- offer text ---------- */
+  function offerText(){
+    var k=S.model,t=cur(k),c=calc(k),id=t.id,L=[];
+    L.push('Привет! Хочу предложить конкретный план по планшету.');
+    L.push('');
+    L.push('Модель: '+t.name+', '+t.cfg+' ('+kit(t)+').');
+    var price='Цена: '+eur(effPrice(id));
+    if(effExtra(id)>0){price+=' плюс перо и аксессуары '+eur(effExtra(id));}
+    if(S.oldSale>0){price+=', минус продажа старого планшета '+eur(S.oldSale);}
+    L.push(price+'. К оплате: '+eur(c.total)+'.');
+    if(S.ownPen&&isLen(t)&&t.pen!=='in'){L.push('Перо от Idea Tab Pro у меня уже есть, докупать его не нужно.');}
+    L.push('Как делим: родители '+eur(c.parents)+', я '+eur(c.mine)+'.');
+    L.push('Где пригодится: конспекты пером на занятиях, PDF с пометками для учёбы и психиатрии, атласы по анатомии с большими иллюстрациями, эскизы, презентации и макеты для бренда одежды. Дальше он пригодится и в университете. Старый планшет лагает, не держит заряд и не вмещает материалы. Пользоваться буду каждый день или несколько дней в неделю, по моей оценке около '+totalHours()+' часов в неделю.');
+    var picked=CONDS.filter(function(x){return S.cond.indexOf(x[0])>-1;});
+    if(picked.length){
+      L.push('');
+      L.push('Условия с моей стороны:');
+      picked.forEach(function(x){
+        var tx=x[1];
+        if(x[0]==='cold'&&S.oldSale>0){tx='Продаю старый планшет примерно за '+eur(S.oldSale)+', деньги идут в покупку.';}
+        if(x[0]==='c14'){tx='Покупаем онлайн и первые 14 дней я веду дневник. Если планшет реально пригодился меньше чем в '+S.trial.thr+' днях из 14, возвращаем (если магазин принимает комплект).';}
+        L.push('- '+tx);
+      });
+    }
+    L.push('');
+    L.push('Если что-то не подходит, давайте обсудим.');
+    return L.join('\n');
+  }
+
+  function yearsText(){return S.years+' года';}
+
+  /* ---------- render ---------- */
+  function render(){
+    var hrs=totalHours();
+    HRS.forEach(function(h){
+      var val=S.hours[h[0]];
+      $('o-'+h[0]).textContent=val+' ч';
+      var rd=$('rd-'+h[0]);if(rd){rd.textContent=val;}
+    });
+    $('hrsTotal').textContent=hrs;
+    $('o-budget').textContent='€'+S.f.budget;
+
+    ['a','b'].forEach(function(k){
+      var t=cur(k),c=calc(k),ex=effExtra(t.id);
+      $('tot-'+k).textContent=eur(c.total);
+      $('par-'+k).textContent=eur(c.parents);
+      $('mine-'+k).textContent=eur(c.mine);
+      $('hour-'+k).textContent=eur2(c.perHour);
+      $('month-'+k).textContent=eur(c.perMonth);
+      $('sub-'+k).textContent=t.cfg+', '+kit(t);
+      $('hint-'+k).textContent=t.priceNote+(ex>0&&t.extraNote?' '+t.extraNote:'')+(penUnknown(t)?' Цена пера не учтена, впишите её в поле «Перо и аксессуары».':'');
+      $('q-'+k).textContent=t.name+', '+t.cfg+', около '+eur(effPrice(t.id))+(ex>0?' плюс перо '+eur(ex):'')+', '+kit(t);
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-fund]'),function(b){
+      b.setAttribute('aria-pressed',b.getAttribute('data-fund')===S.fund?'true':'false');
+    });
+    $('custom-wrap').hidden=S.fund!=='custom';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-model]'),function(b){
+      var on=b.getAttribute('data-model')===S.model;
+      b.setAttribute('aria-pressed',on?'true':'false');
+      b.textContent=on?'Выбрано для предложения':'Выбрать для предложения';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-model2]'),function(b){
+      var k=b.getAttribute('data-model2');
+      b.setAttribute('aria-pressed',k===S.model?'true':'false');
+      b.textContent=cur(k).name;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-pc]'),function(b){
+      b.setAttribute('aria-pressed',b.getAttribute('data-pc')===S.pc?'true':'false');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-os]'),function(b){
+      b.setAttribute('aria-pressed',b.getAttribute('data-os')===S.f.os?'true':'false');
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sort]'),function(b){
+      b.setAttribute('aria-pressed',b.getAttribute('data-sort')===S.sort?'true':'false');
+    });
+
+    renderCatalog();
+
+    var ca=calc('a'),cb=calc('b'),d=cb.total-ca.total,na=cur('a').name,nb=cur('b').name;
+    if(Math.abs(d)>=1){
+      var hi=d>0?nb:na,lo=d>0?na:nb;
+      $('delta').innerHTML=hi+' дороже, чем '+lo+', на <strong>'+eur(Math.abs(d))+'</strong>. За '+yearsText()+' это около '+eur(Math.abs(d)/(S.years*12))+' в месяц. Чем именно оправдана разница, видно в сравнении выше.';
+    }else{
+      $('delta').textContent='При этих ценах два варианта стоят одинаково.';
+    }
+
+    var cs=calc(S.model),cm=cur(S.model);
+    $('dyn-cost').innerHTML=hrs>0
+      ?'При моих оценках ('+hrs+' ч в неделю, '+yearsText()+') '+cm.name+' обходится примерно в <strong>'+eur2(cs.perHour)+'</strong> за час использования и <strong>'+eur(cs.perMonth)+'</strong> в месяц.'
+      :'Укажите часы в разделе «Сколько это стоит на деле», и здесь появится цена часа.';
+
+    var body=$('pcbody');body.innerHTML='';
+    PCROWS.forEach(function(r){
+      var tr=document.createElement('tr');
+      var cells=[r[1][S.pc],r[2],r[3]];
+      tr.innerHTML='<td>'+r[0]+'</td>'+cells.map(function(x){return '<td><span class="r '+x+'">'+RT[x]+'</span></td>';}).join('');
+      body.appendChild(tr);
+    });
+    $('pcnote').textContent=S.pc==='laptop'
+      ?'Ноутбук хорошо печатает и работает с лекалами. Планшет добавляет письмо и рисунок пером, чтение с пометками и лёгкий вес. Эти задачи ноутбук делает плохо.'
+      :'Стационарный компьютер на Windows остаётся дома. Планшет берёт на себя всё, что нужно вне стола: занятия, чтение, эскизы. Файлы между ними ходят через облако или кабель.';
+
+    var out=$('oldOut');
+    if(!S.old.length){
+      out.innerHTML='<p class="empty">Отметьте пункты выше, и здесь соберётся ответ про старый планшет.</p>';
+    }else{
+      var items=OLD.filter(function(o){return S.old.indexOf(o[0])>-1;}).map(function(o){return '<li>'+o[1]+'</li>';}).join('');
+      out.innerHTML='<p><strong>Что не так с моим старым планшетом:</strong></p><ul style="padding-left:1.2em;margin-top:6px">'+items+'</ul>';
+    }
+
+    var tr2=S.trial;
+    STEPS.forEach(function(s){$('st-'+s[0]).textContent=tr2[s[0]];});
+    $('barFill').style.width=Math.min(100,tr2.days/14*100)+'%';
+    $('barThr').style.left='calc('+(tr2.thr/14*100)+'% - 1px)';
+    $('verdict').textContent=tr2.days>=tr2.thr
+      ?'Порог пройден: планшет пригодился в '+tr2.days+' днях из 14. Оставляем.'
+      :'Пока '+tr2.days+' из '+tr2.thr+' нужных дней. Если к концу 14 дней не дотянем, возвращаем.';
+    $('report').value=['Отчёт за 14 дней с планшетом.','Дней, когда пригодился: '+tr2.days+' из 14 (порог '+tr2.thr+').','Конспектов: '+tr2.notes+'. Эскизов: '+tr2.sketches+'. Размеченных материалов: '+tr2.mats+'.','Итог: '+(tr2.days>=tr2.thr?'порог пройден, оставляем.':'порог пока не пройден.')].join('\n');
+
+    $('offer').value=offerText();
+    save();
+  }
+
+  function setStatus(t){$('status').textContent=t;}
+  $('copy').addEventListener('click',function(){
+    var t=$('offer').value;
+    function fallback(){var o=$('offer');o.focus();o.select();setStatus('Текст выделен, скопируйте его вручную.');}
+    try{navigator.clipboard.writeText(t).then(function(){setStatus('Скопировано.');},fallback);}catch(e){fallback();}
+  });
+  $('copyReport').addEventListener('click',function(){
+    var t=$('report').value,st=$('status2');
+    function fb(){var o=$('report');o.focus();o.select();st.textContent='Текст выделен, скопируйте его вручную.';}
+    try{navigator.clipboard.writeText(t).then(function(){st.textContent='Скопировано.';},fb);}catch(e){fb();}
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
