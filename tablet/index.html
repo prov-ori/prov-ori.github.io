@@ -202,6 +202,16 @@ footer{padding-top:40px}
     </div>
   </header>
 
+  <div class="note" id="tldr" style="margin-top:16px">
+    <strong>Коротко для родителей</strong>
+    <ul>
+      <li id="tl-1"></li>
+      <li>Зачем: конспекты пером, PDF и атласы по анатомии с большими иллюстрациями, эскизы и макеты для бренда. Телефон для этого мал, компьютер стационарный, старый планшет лагает и не держит заряд.</li>
+      <li>Как снижаю риск: покупка онлайн с возвратом в течение 14 дней, отчёт о пользе через месяц, оповещение о цене и ожидание удачной скидки.</li>
+      <li>Подробности, сравнение моделей и расчёты ниже.</li>
+    </ul>
+  </div>
+
   <section id="where">
     <div class="stack">
       <h2>Где планшет мне нужен</h2>
@@ -447,6 +457,14 @@ footer{padding-top:40px}
           <button type="button" class="btn ghost pick" data-model="b" aria-pressed="false">Выбрать для предложения</button>
         </article>
       </div>
+      <div class="panel">
+        <h3>Цены в Эстонии, которые я проверил</h3>
+        <p class="hint">Что нашёл я сам: <strong>Arvutitark.ee</strong> показывает Idea Tab Pro 12,7″ 256 ГБ / 8 ГБ, но на момент проверки модели нет в наличии, а цены на странице я не увидел. В Латвии (Dateks) модель стоит €389,27 и тоже недоступна. Паридигит (Ирландия) давал €349. Так что для Эстонии разумно ожидать €350–390, а не €349. Проверьте эстонские магазины сами: <a href="https://www.hinnavaatlus.ee/" target="_blank" rel="noopener">Hinnavaatlus</a>, <a href="https://arvutitark.ee/" target="_blank" rel="noopener">Arvutitark</a>, <a href="https://www.klick.ee/" target="_blank" rel="noopener">Klick</a>, <a href="https://www.photopoint.ee/" target="_blank" rel="noopener">Photopoint</a>, <a href="https://www.1a.ee/" target="_blank" rel="noopener">1A</a>.</p>
+        <div id="pl-rows" class="stack" style="gap:10px"></div>
+        <p class="total" id="pl-min"></p>
+        <div class="seg"><button type="button" class="btn ghost" id="pl-use">Подставить самую низкую цену в расчёт</button></div>
+      </div>
+
       <p class="note" id="delta"></p>
       <p class="hint">Цена часа показывает стоимость использования, а не экономию. Планшет сам ничего не окупает: он оправдан, только если я пользуюсь им в те часы, что указаны выше.</p>
     </div>
@@ -666,7 +684,7 @@ footer{padding-top:40px}
      size:12.7,res:'2944×1840',hz:144,nits:'400 нит',chip:'Dimensity 8300',ram:8,storage:256,sd:'microSD до 1 ТБ',pen:'in',penName:'Tab Pen Plus',kb:'out',weight:620,battery:'10 200 мАч',
      upd:'Обещано 2 версии Android и 4 года патчей',until:2029,
      me:'Большой экран и перо в комплекте за небольшие деньги. Для конспектов, PDF и эскизов хватает.',
-     con:'Яркость скромнее, 8 ГБ памяти, клавиатура отдельно, обновления короче, чем у Samsung.',
+     con:'Яркость скромнее, 8 ГБ памяти, клавиатура отдельно, блок питания в комплект не входит (по данным магазинов), обновления короче, чем у Samsung.',
      src:[['Notebookcheck: Idea Tab Pro по €299 с пером, тест батареи','https://www.notebookcheck.com/Active-Stylus-3k-Touchscreen-12-7-Zoll-8-GB-RAM-256-GB-Flash-Lenovo-Android-Tablet-im-Angebot.1325190.0.html'],['Paradigit: Idea Tab Pro 256 ГБ за €349 с пером','https://www.paradigit.ie/lenovo-idea-tab-pro-12-7-inch-256-gb-wi-fi-grey/21750206/product'],['Smartprix: характеристики Idea Tab Pro','https://us.smartprix.com/tablets/lenovo-idea-tab-pro-ppd1r4owjhcc'],['PC Games Hardware: Idea Tab Pro с пером за €297 в Black Friday','https://www.pcgameshardware.de/Tablet-Hardware-274791/News/lenovo-idea-tab-pro-guenstig-bei-amazon-im-black-friday-angebot-1487317/'],['TechRadar: Idea Tab Pro со скидкой 33% после Black Friday 2025','https://www.techradar.com/tablets/the-lenovo-idea-tab-pro-is-the-best-ipad-alternative-and-its-33-percent-off-in-this-post-black-friday-deal'],['ElectroCity: даты Black Friday 2026','https://www.electrocity.ie/black-friday'],['GSMArena: обещания по обновлениям Idea Tab Pro','https://www.gsmarena.com/lenovo_idea_tab_pro_launched_in_india_-news-66961.php']]},
     {id:'yoga',name:'Lenovo Yoga Tab Plus',cfg:'16/256 ГБ',os:'Android',price:709,priceNote:'Магазин LMT, комплект с клавиатурой и пером. От €649 по агрегатору.',conf:'ok',extra:0,
      size:12.7,res:'2944×1840',hz:144,nits:'650 нит, до 900 в HDR',chip:'Snapdragon 8 Gen 3',ram:16,storage:256,sd:false,pen:'in',penName:'Tab Pen Pro',kb:'in',weight:640,battery:'10 200 мАч',
@@ -726,7 +744,7 @@ footer{padding-top:40px}
   function tb(id){for(var i=0;i<T.length;i++){if(T[i].id===id){return T[i];}}return null;}
 
   var HRS=[['study','Учёба'],['brand','Бренд одежды'],['design','Презентации и дизайн для бренда'],['psy','Психиатрия и самообучение'],['books','Книги и атласы по анатомии'],['kitchen','Кулинария']];
-  var DEF={bfd:10,slot:{a:'idea',b:'idea2'},ownPen:true,model:'a',price:{},extra:{},oldSale:0,years:3,
+  var DEF={log:[{s:'',p:0},{s:'',p:0},{s:'',p:0}],bfd:10,slot:{a:'idea',b:'idea2'},ownPen:true,model:'a',price:{},extra:{},oldSale:0,years:3,
     hours:{study:6,brand:4,design:3,psy:4,books:5,kitchen:2},fund:'half',custom:300,pc:'desktop',old:['slow','mem','bat','screen'],
     cond:['c14','creport'],trial:{days:0,notes:0,sketches:0,mats:0,thr:8},
     f:{budget:900,pen:false,big:false,sd:false,s256:true,os:'all'},sort:'price'};
@@ -935,6 +953,23 @@ footer{padding-top:40px}
 
   $('ownPen').checked=!!S.ownPen;
   $('ownPen').addEventListener('change',function(){S.ownPen=$('ownPen').checked;syncInputs();render();});
+  (function(){
+    var host=$('pl-rows');
+    for(var i=0;i<3;i++){
+      (function(i){
+        var row=document.createElement('div');row.className='grid2';
+        row.innerHTML='<label for="pl-s'+i+'">Магазин и дата проверки<input id="pl-s'+i+'" type="text" maxlength="60" autocomplete="off" style="font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%;min-width:0"></label><label for="pl-p'+i+'">Цена, €<input id="pl-p'+i+'" type="number" inputmode="decimal" min="0" step="1"></label>';
+        host.appendChild(row);
+        var s=$('pl-s'+i),pr=$('pl-p'+i);
+        s.value=S.log[i]?S.log[i].s:'';pr.value=S.log[i]&&S.log[i].p?S.log[i].p:'';
+        s.addEventListener('input',function(){S.log[i].s=s.value;render();});
+        pr.addEventListener('input',function(){S.log[i].p=num(pr.value);render();});
+      })(i);
+    }
+    $('pl-use').addEventListener('click',function(){
+      var m=minLog();if(m>0){S.price[cur(S.model).id]=m;syncInputs();render();}
+    });
+  })();
   $('bf-disc').value=S.bfd;
   $('bf-disc').addEventListener('input',function(){S.bfd=parseInt($('bf-disc').value,10)||0;render();});
   $('oldSale').value=S.oldSale;
@@ -1139,6 +1174,13 @@ footer{padding-top:40px}
       $('bf-mine').textContent=eur(save*(1-ratio));
       $('bf-wk').textContent=days>0?eur2(save/weeks):'не посчитать';
     })();
+    (function(){
+      var m=minLog(),t=cur(S.model);
+      $('pl-min').textContent=m>0?'Самая низкая найденная цена: '+eur(m)+'. Расчёт для «'+t.name+'» сейчас идёт с ценой '+eur(effPrice(t.id))+'.':'Впишите хотя бы одну цену, и здесь появится самая низкая.';
+      $('pl-use').disabled=!(m>0);
+      var c=calc(S.model);
+      $('tl-1').textContent='Прошу: '+t.name+', '+t.cfg+', ориентир '+eur(c.total)+(S.oldSale>0?' (после продажи старого планшета)':'')+'. Родители '+eur(c.parents)+', я '+eur(c.mine)+'.';
+    })();
     var cs=calc(S.model),cm=cur(S.model);
     $('dyn-cost').innerHTML=hrs>0
       ?'При моих оценках ('+hrs+' ч в неделю, '+yearsText()+') '+cm.name+' обходится примерно в <strong>'+eur2(cs.perHour)+'</strong> за час использования и <strong>'+eur(cs.perMonth)+'</strong> в месяц.'
@@ -1176,6 +1218,7 @@ footer{padding-top:40px}
     save();
   }
 
+  function minLog(){var m=0;S.log.forEach(function(x){if(x&&x.p>0&&(m===0||x.p<m)){m=x.p;}});return m;}
   function setStatus(t){$('status').textContent=t;}
   $('copy').addEventListener('click',function(){
     var t=$('offer').value;
