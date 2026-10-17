@@ -174,6 +174,7 @@ footer{padding-top:40px}
       <a class="chip" href="#where">Где нужен</a>
       <a class="chip" href="#choose">Выбор модели</a>
       <a class="chip" href="#cost">Стоимость</a>
+      <a class="chip" href="#deals">Скидки</a>
       <a class="chip" href="#answers">Возражения</a>
       <a class="chip" href="#trial">14 дней</a>
       <a class="chip" href="#plan">Предложение</a>
@@ -451,6 +452,60 @@ footer{padding-top:40px}
     </div>
   </section>
 
+  <section id="deals">
+    <div class="stack">
+      <h2>Скидки и Black Friday</h2>
+      <p class="sec-lead">В 2026 году Black Friday выпадает на <strong>27 ноября</strong>, Cyber Monday на 30 ноября. <strong id="bf-days"></strong> Часть магазинов начинает акции уже в начале ноября.</p>
+
+      <div class="note">
+        <strong>Что показал прошлый год на Idea Tab Pro</strong>
+        <ul>
+          <li>В Black Friday 2025 Idea Tab Pro с пером Tab Pen Plus стоил €297 в немецком Amazon при списочной цене €329. Скидка около 10%.</li>
+          <li>Прежний минимум, €299, был 7 октября 2025, то есть задолго до распродажи. Хорошие цены бывают не только в Black Friday.</li>
+          <li>В начале декабря 2025 для этой модели писали о скидке 33% (£249,99 в Великобритании, $259,99 в США). Но этот процент считали от высокой списочной цены. Реальная экономия против обычной цены меньше.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>Сколько я сэкономлю, если подожду</h3>
+        <p class="sub" id="bf-model"></p>
+        <div class="srow">
+          <label for="bf-disc">Ожидаемая скидка</label>
+          <output id="bf-disc-o" class="num"></output>
+          <input type="range" id="bf-disc" min="0" max="30" step="1">
+        </div>
+        <dl class="out">
+          <div class="wide"><dt>Цена в акцию</dt><dd id="bf-price"></dd></div>
+          <div><dt>Экономия</dt><dd id="bf-save"></dd></div>
+          <div><dt>За неделю ожидания</dt><dd id="bf-wk"></dd></div>
+          <div><dt>Родителям</dt><dd id="bf-par"></dd></div>
+          <div><dt>Мне</dt><dd id="bf-mine"></dd></div>
+        </dl>
+        <p class="hint">10% взяты из случая Idea Tab Pro в 2025 году. Скидка не гарантирована, а на конкретную версию (256 ГБ, с пером) в Эстонии её может не быть.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Ждать до Black Friday или покупать сейчас</h3>
+        <ul>
+          <li><strong>Ждать стоит</strong>, если старый планшет вытерпит ещё несколько недель и родители не против подождать. Экономия на этой модели порядка €30–50.</li>
+          <li><strong>Покупать сейчас стоит</strong>, если старый планшет мешает учиться прямо сейчас. Несколько недель потерянных конспектов и материалов весят больше €30–50.</li>
+          <li><strong>Лучше, чем ждать дату:</strong> поставить оповещение о цене и купить, когда нужная версия опустится до целевой цены. Акции бывают и до, и после Black Friday.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>Как не попасться на фальшивую скидку</h3>
+        <ul>
+          <li>Смотрите историю цены модели в сервисах вроде Geizhals или Idealo и сравнивайте с ценой в эстонском магазине (например, через Hinnavaatlus).</li>
+          <li>В ЕС магазин, объявляя скидку, должен показывать самую низкую цену за предыдущие 30 дней. Сравнивайте с ней, а не с зачёркнутой «обычной» ценой.</li>
+          <li>Проверьте, что скидка именно на ту версию: 256 ГБ и с пером. Часто скидка на 128 ГБ или на модель без пера.</li>
+          <li>Сравните итог с доставкой в Эстонию. Уточните, доставляет ли магазин в Эстонию, и условия возврата: по правилам ЕС для онлайн-покупок обычно 14 дней, но в праздничный сезон они могут отличаться.</li>
+          <li>Проверьте студенческие скидки и программы обмена у производителя (Lenovo, Samsung, Apple).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <section id="answers">
     <div class="stack">
       <h2>Вопросы, которые вы зададите</h2>
@@ -462,7 +517,7 @@ footer{padding-top:40px}
           <p>Есть модели с пером в комплекте от €299. Фильтр «Бюджет» в каталоге показывает, что можно взять за любую сумму.</p>
           <ul>
             <li>Сумму уменьшает продажа старого планшета и моя доля.</li>
-            <li>Цены иногда падают в распродажи. Ближайшая большая, Black Friday, 27 ноября 2026 года. Idea Tab Pro в таких акциях уже продавался за €299.</li>
+            <li>Цены иногда падают в распродажи. Ближайшая большая, Black Friday, 27 ноября 2026 года. В 2025 году Idea Tab Pro с пером в Black Friday стоил €297 в Германии при списочной цене €329. Подробности в разделе «Скидки».</li>
             <li>Покупка в интернет-магазине с возвратом в течение 14 дней.</li>
           </ul>
           <p id="dyn-cost"></p>
@@ -607,12 +662,12 @@ footer{padding-top:40px}
 
   /* ---------- catalog ---------- */
   var T=[
-    {id:'idea',name:'Lenovo Idea Tab Pro',cfg:'8/256 ГБ',os:'Android',price:349,priceNote:'Магазин Paradigit, перо в комплекте. В распродажи бывает €299.',conf:'ok',extra:0,
+    {id:'idea',name:'Lenovo Idea Tab Pro',cfg:'8/256 ГБ',os:'Android',price:349,priceNote:'Магазин Paradigit, перо в комплекте. В Black Friday 2025 было €297 (Amazon DE).',conf:'ok',extra:0,
      size:12.7,res:'2944×1840',hz:144,nits:'400 нит',chip:'Dimensity 8300',ram:8,storage:256,sd:'microSD до 1 ТБ',pen:'in',penName:'Tab Pen Plus',kb:'out',weight:620,battery:'10 200 мАч',
      upd:'Обещано 2 версии Android и 4 года патчей',until:2029,
      me:'Большой экран и перо в комплекте за небольшие деньги. Для конспектов, PDF и эскизов хватает.',
      con:'Яркость скромнее, 8 ГБ памяти, клавиатура отдельно, обновления короче, чем у Samsung.',
-     src:[['Notebookcheck: Idea Tab Pro по €299 с пером, тест батареи','https://www.notebookcheck.com/Active-Stylus-3k-Touchscreen-12-7-Zoll-8-GB-RAM-256-GB-Flash-Lenovo-Android-Tablet-im-Angebot.1325190.0.html'],['Paradigit: Idea Tab Pro 256 ГБ за €349 с пером','https://www.paradigit.ie/lenovo-idea-tab-pro-12-7-inch-256-gb-wi-fi-grey/21750206/product'],['Smartprix: характеристики Idea Tab Pro','https://us.smartprix.com/tablets/lenovo-idea-tab-pro-ppd1r4owjhcc'],['GSMArena: обещания по обновлениям Idea Tab Pro','https://www.gsmarena.com/lenovo_idea_tab_pro_launched_in_india_-news-66961.php']]},
+     src:[['Notebookcheck: Idea Tab Pro по €299 с пером, тест батареи','https://www.notebookcheck.com/Active-Stylus-3k-Touchscreen-12-7-Zoll-8-GB-RAM-256-GB-Flash-Lenovo-Android-Tablet-im-Angebot.1325190.0.html'],['Paradigit: Idea Tab Pro 256 ГБ за €349 с пером','https://www.paradigit.ie/lenovo-idea-tab-pro-12-7-inch-256-gb-wi-fi-grey/21750206/product'],['Smartprix: характеристики Idea Tab Pro','https://us.smartprix.com/tablets/lenovo-idea-tab-pro-ppd1r4owjhcc'],['PC Games Hardware: Idea Tab Pro с пером за €297 в Black Friday','https://www.pcgameshardware.de/Tablet-Hardware-274791/News/lenovo-idea-tab-pro-guenstig-bei-amazon-im-black-friday-angebot-1487317/'],['TechRadar: Idea Tab Pro со скидкой 33% после Black Friday 2025','https://www.techradar.com/tablets/the-lenovo-idea-tab-pro-is-the-best-ipad-alternative-and-its-33-percent-off-in-this-post-black-friday-deal'],['ElectroCity: даты Black Friday 2026','https://www.electrocity.ie/black-friday'],['GSMArena: обещания по обновлениям Idea Tab Pro','https://www.gsmarena.com/lenovo_idea_tab_pro_launched_in_india_-news-66961.php']]},
     {id:'yoga',name:'Lenovo Yoga Tab Plus',cfg:'16/256 ГБ',os:'Android',price:709,priceNote:'Магазин LMT, комплект с клавиатурой и пером. От €649 по агрегатору.',conf:'ok',extra:0,
      size:12.7,res:'2944×1840',hz:144,nits:'650 нит, до 900 в HDR',chip:'Snapdragon 8 Gen 3',ram:16,storage:256,sd:false,pen:'in',penName:'Tab Pen Pro',kb:'in',weight:640,battery:'10 200 мАч',
      upd:'Патчи безопасности до 2029 года (по обзору Lon.TV)',until:2029,
@@ -671,7 +726,7 @@ footer{padding-top:40px}
   function tb(id){for(var i=0;i<T.length;i++){if(T[i].id===id){return T[i];}}return null;}
 
   var HRS=[['study','Учёба'],['brand','Бренд одежды'],['design','Презентации и дизайн для бренда'],['psy','Психиатрия и самообучение'],['books','Книги и атласы по анатомии'],['kitchen','Кулинария']];
-  var DEF={slot:{a:'idea',b:'idea2'},ownPen:true,model:'a',price:{},extra:{},oldSale:0,years:3,
+  var DEF={bfd:10,slot:{a:'idea',b:'idea2'},ownPen:true,model:'a',price:{},extra:{},oldSale:0,years:3,
     hours:{study:6,brand:4,design:3,psy:4,books:5,kitchen:2},fund:'half',custom:300,pc:'desktop',old:['slow','mem','bat','screen'],
     cond:['c14','creport'],trial:{days:0,notes:0,sketches:0,mats:0,thr:8},
     f:{budget:900,pen:false,big:false,sd:false,s256:true,os:'all'},sort:'price'};
@@ -681,7 +736,7 @@ footer{padding-top:40px}
     ['cold','Продаю старый планшет, деньги идут в покупку.'],
     ['creport','Через месяц показываю, что делал на планшете: конспекты, эскизы, статьи.'],
     ['cdnd','Ставлю таймеры приложений и режим «Не беспокоить» на время занятий.'],
-    ['cbf','Следим за ценами до Black Friday (27 ноября) и покупаем по лучшей цене.']
+    ['cbf','Ставлю оповещение о цене и покупаем, как только нужная версия подешевеет до целевой цены, но не позже Black Friday (27 ноября).']
   ];
   var PCROWS=[
     ['Конспект пером на занятии',{laptop:'b',desktop:'b'},'b','g'],
@@ -880,6 +935,8 @@ footer{padding-top:40px}
 
   $('ownPen').checked=!!S.ownPen;
   $('ownPen').addEventListener('change',function(){S.ownPen=$('ownPen').checked;syncInputs();render();});
+  $('bf-disc').value=S.bfd;
+  $('bf-disc').addEventListener('input',function(){S.bfd=parseInt($('bf-disc').value,10)||0;render();});
   $('oldSale').value=S.oldSale;
   $('oldSale').addEventListener('input',function(){S.oldSale=num($('oldSale').value);render();});
   $('years').value=String(S.years);
@@ -1068,6 +1125,20 @@ footer{padding-top:40px}
       $('delta').textContent='При этих ценах два варианта стоят одинаково.';
     }
 
+    (function(){
+      var now=new Date(),bf=new Date(2026,10,27);
+      var days=Math.ceil((bf.getTime()-now.getTime())/86400000);
+      var weeks=Math.max(days,0)/7;
+      $('bf-days').textContent=days>0?'До Black Friday осталось '+days+' дн. (около '+String(Math.round(weeks*10)/10).replace('.',',')+' нед.).':(days===0?'Black Friday сегодня.':'В этом году Black Friday уже прошла.');
+      var t=cur(S.model),c=calc(S.model),pr=effPrice(t.id),d=S.bfd/100,save=pr*d,ratio=c.total>0?c.parents/c.total:0;
+      $('bf-model').textContent=t.name+', '+t.cfg+'. Цена сейчас '+eur(pr)+'.';
+      $('bf-disc-o').textContent=S.bfd+'%';
+      $('bf-price').textContent=eur(pr-save);
+      $('bf-save').textContent=eur(save);
+      $('bf-par').textContent=eur(save*ratio);
+      $('bf-mine').textContent=eur(save*(1-ratio));
+      $('bf-wk').textContent=days>0?eur2(save/weeks):'не посчитать';
+    })();
     var cs=calc(S.model),cm=cur(S.model);
     $('dyn-cost').innerHTML=hrs>0
       ?'При моих оценках ('+hrs+' ч в неделю, '+yearsText()+') '+cm.name+' обходится примерно в <strong>'+eur2(cs.perHour)+'</strong> за час использования и <strong>'+eur(cs.perMonth)+'</strong> в месяц.'
