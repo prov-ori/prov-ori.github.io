@@ -4,10 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-</head>
-<body>
 <title>Зачем мне планшет</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Onest:wght@400;500;600&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
@@ -90,10 +87,11 @@ mark{background:linear-gradient(transparent 58%,var(--chalk) 58%);color:inherit;
 
 /* cards (details) */
 details.card{background:var(--surface);border:1px solid var(--line);border-radius:10px}
-details.card>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;font-weight:600}
+details.card>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;align-items:start;gap:6px 12px;padding:14px 16px;font-weight:600}
 details.card>summary::-webkit-details-marker{display:none}
-details.card>summary .ct{min-width:0;overflow-wrap:anywhere}
-details.card>summary::after{content:"+";font-family:var(--f-display);color:var(--accent);font-size:1.1rem;margin-left:4px}
+details.card>summary .ct{min-width:0;overflow-wrap:break-word;hyphens:auto}
+details.card>summary .tag{grid-column:1;justify-self:start}
+details.card>summary::after{content:"+";font-family:var(--f-display);color:var(--accent);font-size:1.1rem;grid-column:2;grid-row:1;align-self:start}
 details.card[open]>summary::after{content:"\2212"}
 .cb{padding:2px 16px 16px;display:flex;flex-direction:column;gap:12px}
 .cb dt{font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:6px}
@@ -168,6 +166,8 @@ textarea{min-height:300px;line-height:1.5;resize:vertical}
 footer{padding-top:40px}
 </style>
 
+</head>
+<body>
 <div class="wrap">
   <nav class="nav" aria-label="Разделы страницы">
     <div class="chips">
@@ -752,12 +752,16 @@ footer{padding-top:40px}
   /* ---------- catalog rendering ---------- */
   function chipsFor(t){
     var c=[];
-    c.push(t.pen==='in'?['hi','Перо в комплекте']:['low','Перо отдельно']);
+    c.push(t.pen==='in'?['hi','Перо в комплекте']:((S.ownPen&&isLen(t))?['mid','Моё перо подходит, проверить']:['low','Перо отдельно']));
     if(t.kb==='in'){c.push(['hi','Клавиатура в комплекте']);}
     c.push([t.size>=12?'hi':(t.size>=11?'mid':'low'),'Экран '+dec(t.size)+'″']);
     if(t.until){c.push([t.until>=2031?'hi':'mid','Обновления до ~'+t.until]);}else{c.push(['low','Срок обновлений неизвестен']);}
     if(hasSd(t)){c.push(['mid','microSD']);}
     return c.map(function(x){return '<span class="tag '+x[0]+'">'+x[1]+'</span>';}).join('');
+  }
+  function conText(t){
+    if(S.ownPen&&isLen(t)){return t.con.replace('Перо в комплект не входит. ','Перо от Idea Tab Pro у меня уже есть. ');}
+    return t.con;
   }
   function anatNote(t){
     var p=[];
@@ -779,7 +783,7 @@ footer{padding-top:40px}
       '<div class="chips2">'+chipsFor(t)+'</div>'+
       '<p><strong>Для моих задач.</strong> '+t.me+'</p>'+
       '<p class="hint"><strong>Атласы по анатомии.</strong> '+anatNote(t)+'</p>'+
-      '<p class="hint"><strong>Минусы.</strong> '+t.con+'</p>'+
+      '<p class="hint"><strong>Минусы.</strong> '+conText(t)+'</p>'+
       '<div class="slotbtns">'+
         '<button type="button" class="btn ghost" data-pick="a" data-id="'+t.id+'" aria-pressed="'+(a?'true':'false')+'">Вариант 1</button>'+
         '<button type="button" class="btn ghost" data-pick="b" data-id="'+t.id+'" aria-pressed="'+(b?'true':'false')+'">Вариант 2</button>'+
@@ -819,11 +823,15 @@ footer{padding-top:40px}
     var out=[],ca=cost(a),cb=cost(b),d=cb-ca,A=a.name,B=b.name;
     if(a.id===b.id){return ['Выбрана одна и та же модель. Выберите другую во втором варианте.'];}
     if(Math.abs(d)>=20){out.push((d>0?B:A)+' дороже на '+eur(Math.abs(d))+' с учётом пера.');}else{out.push('Цена с пером почти одинаковая.');}
-    if(a.pen!==b.pen){var w=a.pen==='in'?a:b,o=a.pen==='in'?b:a;out.push('У '+w.name+' перо в комплекте, у '+o.name+' его нужно докупать.');}
+    function penIn(t){return t.pen==='in'||(S.ownPen&&isLen(t));}
+    if(penIn(a)!==penIn(b)){var w=penIn(a)?a:b,o=penIn(a)?b:a;out.push('У '+w.name+' перо есть, у '+o.name+' его нужно докупать.');}
+    [a,b].forEach(function(t){if(S.ownPen&&isLen(t)&&t.pen!=='in'){out.push(t.name+' идёт без пера, но моё перо от Idea Tab Pro должно подойти (проверю совместимость).');}});
     if(Math.abs(a.size-b.size)>=0.5){var bg=a.size>b.size?a:b,sm=a.size>b.size?b:a;out.push('Экран крупнее у '+bg.name+': '+dec(bg.size)+'″ против '+dec(sm.size)+'″.');}
     if(a.ram&&b.ram&&a.ram!==b.ram){var m=a.ram>b.ram?a:b,l=a.ram>b.ram?b:a;out.push('Памяти больше у '+m.name+': '+m.ram+' ГБ против '+l.ram+' ГБ.');}
     if(a.until&&b.until&&a.until!==b.until){var lg=a.until>b.until?a:b,sh=a.until>b.until?b:a;out.push('Обновления дольше у '+lg.name+': до ~'+lg.until+' против ~'+sh.until+'.');}
     else if((a.until&&!b.until)||(!a.until&&b.until)){var k=a.until?a:b,u=a.until?b:a;out.push('У '+k.name+' обновления обещаны до ~'+k.until+', у '+u.name+' срок я не нашёл.');}
+    if(a.chip!==b.chip){out.push('Процессор: у '+a.name+' '+a.chip+', у '+b.name+' '+b.chip+'.');}
+    if(a.res&&b.res&&a.res!==b.res){out.push('Разрешение экрана: '+a.res+' против '+b.res+'.');}
     if(a.storage!==b.storage||hasSd(a)!==hasSd(b)){
       var sa=a.storage+' ГБ'+(hasSd(a)?' + microSD':''),sb=b.storage+' ГБ'+(hasSd(b)?' + microSD':'');
       out.push('Для библиотеки атласов: '+a.name+' даёт '+sa+', '+b.name+' даёт '+sb+'.');
